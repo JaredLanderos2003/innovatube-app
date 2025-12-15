@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import conexion from '../config/database.js'; //conexión
+import conexion from '../config/database.js'; 
 import bcrypt from 'bcrypt';
 
 const Usuario = conexion.define('Usuario', {
@@ -35,13 +35,13 @@ const Usuario = conexion.define('Usuario', {
   }
 });
 
-// Encriptacion antes de guardar
+// Encriptacion
 Usuario.beforeCreate(async (usuario) => {
   const salt = await bcrypt.genSalt(10);
   usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
 });
 
-// Verificador de la contraseña
+// Verificador
 Usuario.prototype.validarContrasena = async function (passwordIngresado) {
   return await bcrypt.compare(passwordIngresado, this.contrasena);
 };

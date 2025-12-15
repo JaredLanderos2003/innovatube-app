@@ -1,9 +1,9 @@
 import { Sequelize } from 'sequelize';
 
-// Configuración  para conectar a SQLite
+// Configuración  para conectar la BD
 const conexion = new Sequelize({
   dialect: 'sqlite',
-  storage: './database.sqlite', // Archivo donde se guardan los datos
+  storage: './database.sqlite', 
   logging: false 
 });
 

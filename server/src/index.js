@@ -3,36 +3,37 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
 import express from 'express';
-import sequelize from './config/database.js';
-import User from './models/User.js'; // Registro del modelo
+import conexion from './config/database.js'; 
+import User from './models/User.js';
+import rutasAuth from './routes/rutasAuth.js';
 
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middlewares
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Ruta base
+//API
+app.use('/api/auth', rutasAuth);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Servidor activo' });
 });
 
-// Inicio del servidor
+
 async function iniciarServidor() {
   try {
-    await sequelize.sync({ force: false });
-    console.log('BD lista');
+    await conexion.sync({ force: false });
+    console.log('BD lista y sincronizada');
 
     app.listen(PORT, () => {
       console.log(`Servidor arriba en http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.log('Fallo al iniciar la base de datos:');
+    console.error('Error en la BD:', error);
   }
 }
 
