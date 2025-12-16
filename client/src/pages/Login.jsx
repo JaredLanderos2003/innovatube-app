@@ -10,6 +10,7 @@ function Login() {
     const alEnviar = async (datos) => {
       try {
         const respuesta = await clienteAxios.post('/auth/login', datos);
+        
   
         localStorage.setItem('token', respuesta.data.token);
         localStorage.setItem('usuario', JSON.stringify(respuesta.data.usuario));
