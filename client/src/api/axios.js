@@ -1,16 +1,10 @@
 import axios from 'axios';
 
-const clienteAxios = axios.create({
-  baseURL: 'http://localhost:3001/api',
-  withCredentials: true
-});
+const urlBase = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
-clienteAxios.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+const clienteAxios = axios.create({
+  baseURL: urlBase, 
+  withCredentials: true
 });
 
 export default clienteAxios;
