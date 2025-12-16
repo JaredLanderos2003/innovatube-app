@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clienteAxios from '../api/axios'; 
 import toast, { Toaster } from 'react-hot-toast'; 
-import { LogOut, Search, PlayCircle, Star, User } from 'lucide-react';
+import { LogOut, Search, PlayCircle, Star, User, Tv } from 'lucide-react'; // Importé 'Tv' para el icono de canal
 import { Link } from 'react-router-dom';
 
 function Panel() {
@@ -69,7 +69,6 @@ function Panel() {
           
           <div className="flex items-center gap-4 md:gap-6">
             
-          
             <Link 
             to="/favoritos" 
             className="flex items-center gap-2 text-gray-400 hover:text-red-400 transition-colors font-semibold"
@@ -128,36 +127,50 @@ function Panel() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map((video) => (
-            <div key={video.id.videoId} className="bg-slate-900/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl border border-slate-800 hover:border-red-500/30 transition-all hover:-translate-y-2 group flex flex-col h-full">
-              
-              <div className="relative aspect-video">
-                <img 
-                  src={video.snippet.thumbnails.high.url} 
-                  alt={video.snippet.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <PlayCircle size={48} className="text-red-500 drop-shadow-[0_0_10px_rgba(220,38,38,0.8)]" />
+          {videos.map((video) => {
+            const esVideo = video.id.kind === 'youtube#video';
+            const keyId = esVideo ? video.id.videoId : video.id.channelId;
+
+            return (
+              <div key={keyId} className="bg-slate-900/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl border border-slate-800 hover:border-red-500/30 transition-all hover:-translate-y-2 group flex flex-col h-full">
+                
+                <div className="relative aspect-video">
+                  <img 
+                    src={video.snippet.thumbnails.high.url} 
+                    alt={video.snippet.title}
+                    className="w-full h-full object-cover"
+                  />
+                  {esVideo && (
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <PlayCircle size={48} className="text-red-500 drop-shadow-[0_0_10px_rgba(220,38,38,0.8)]" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-5 flex flex-col flex-grow">
+                  <h3 className="font-bold text-lg mb-2 line-clamp-2 text-gray-100">
+                    {video.snippet.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">
+                    {video.snippet.description}
+                  </p>
+                  
+                  {esVideo ? (
+                    <button 
+                      onClick={() => handleFavorito(video)} 
+                      className="w-full mt-2 border border-red-600/50 text-red-400 hover:bg-red-600 hover:text-white py-2 rounded-lg transition-all text-sm font-semibold shadow-sm hover:shadow-red-900/50 flex items-center justify-center gap-2">
+                        <Star size={16} /> Agregar a Favoritos
+                    </button>
+                  ) : (
+                    <div className="w-full mt-2 bg-slate-800 text-gray-500 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 cursor-default select-none border border-slate-700">
+                        <Tv size={16} /> Canal de youtube
+                    </div>
+                  )}
+
                 </div>
               </div>
-
-              <div className="p-5 flex flex-col flex-grow">
-                <h3 className="font-bold text-lg mb-2 line-clamp-2 text-gray-100">
-                  {video.snippet.title}
-                </h3>
-                <p className="text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">
-                  {video.snippet.description}
-                </p>
-                
-                <button 
-                onClick={() => handleFavorito(video)} 
-                className="w-full mt-2 border border-red-600/50 text-red-400 hover:bg-red-600 hover:text-white py-2 rounded-lg transition-all text-sm font-semibold shadow-sm hover:shadow-red-900/50 flex items-center justify-center gap-2">
-                    <Star size={16} /> Agregar a Favoritos
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {!cargando && videos.length === 0 && (
