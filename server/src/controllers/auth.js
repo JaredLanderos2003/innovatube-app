@@ -122,10 +122,12 @@ export const solicitarRecuperacion = async (req, res) => {
     const frontendURL = process.env.FRONTEND_URL || 'http://localhost:5173';
     const enlace = `${frontendURL}/restablecer/${token}`;
 
+    // --- CONFIGURACIÓN SSL (PUERTO 465) + IPv4 ---
+    // Esta es la combinación más robusta para evitar timeouts en Render
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 587,
-      secure: false, 
+      port: 465,            // Puerto SSL
+      secure: true,         // true es OBLIGATORIO para el puerto 465
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS 
@@ -133,11 +135,11 @@ export const solicitarRecuperacion = async (req, res) => {
       tls: {
         rejectUnauthorized: false
       },
-      family: 4,     
-      logger: true,  
-      debug: true   
+      family: 4,      // IMPORTANTE: Obliga a usar IPv4 para que no se pierda en la red
+      logger: true,   
+      debug: true     
     });
-    
+    // ---------------------------------------------
     
     const mailOptions = {
       from: '"Soporte InnovaTube" <no-reply@innovatube.com>',
