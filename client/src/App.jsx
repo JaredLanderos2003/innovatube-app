@@ -2,6 +2,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Registro from './pages/Registro';
 import Login from './pages/Login'; 
 import Panel from './pages/Panel';
+import Favoritos from './pages/Favoritos';
+import Recuperar from './pages/Recuperar';
+import Restablecer from './pages/Restablecer';
 
 
 function Inicio() {
@@ -50,6 +53,9 @@ function App() {
         <Route path="/registro" element={<Registro />} />
         <Route path="/login" element={<Login />} />
         <Route path="/panel" element={<Panel />} />
+        <Route path="/favoritos" element={<Favoritos />} />
+        <Route path="/recuperar" element={<Recuperar />} />
+        <Route path="/restablecer/:token" element={<Restablecer />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,34 +1,51 @@
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom';
 import clienteAxios from '../api/axios';
-import toast, { Toaster } from 'react-hot-toast'; // Alertas chulas
+import toast, { Toaster } from 'react-hot-toast';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 function Registro() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
-  
+    const [captchaToken, setCaptchaToken] = useState(null);
+    const captchaRef = useRef(null);
+
+    const onCaptchaChange = (token) => {
+        setCaptchaToken(token);
+    };
+
     const alEnviar = async (datos) => {
-      try {
-        const respuesta = await clienteAxios.post('/auth/registro', datos);
-  
-        toast.success('¡Cuenta creada con éxito!');
-  
-        setTimeout(() => {
-          navigate('/login');
-        }, 4000);
-  
-      } catch (error) {
-        console.log(error);
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.mensaje);
-        } else {
-          toast.error('Ocurrió un error inesperado.');
+        if (!captchaToken) {
+            toast.error('Por favor confirma que no eres un robot ');
+            return;
         }
-      }
+
+        try {
+            const datosCompletos = { ...datos, recaptchaToken: captchaToken };
+            await clienteAxios.post('/auth/registro', datosCompletos);
+            toast.success('Tu cuenta se creo correctamente!');
+    
+            setTimeout(() => {
+                navigate('/login');
+            }, 4000); 
+    
+        } catch (error) {
+            console.log(error);
+            
+            if(captchaRef.current) captchaRef.current.reset();
+            setCaptchaToken(null);
+
+            if (error.response && error.response.data) {
+                toast.error(error.response.data.mensaje);
+            } else {
+                toast.error('ERROR.');
+            }
+        }
     };
   
     return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-b from-black via-slate-900 to-black p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-black via-slate-900 to-black p-4">
         <Toaster position="top-center" reverseOrder={false} />
   
         <div className="w-full max-w-md bg-slate-900/90 rounded-2xl shadow-2xl p-8 border border-slate-700">
@@ -51,7 +68,7 @@ function Registro() {
                     border border-slate-700
                     focus:outline-none focus:ring-2 focus:ring-red-500/70"
                 />
-                {errors.nombre && <span className="text-red-400 text-xs">Requerido</span>}
+                {errors.nombre && <span className="text-red-400 text-xs">Obligatorio</span>}
               </div>
   
               <div className="w-1/2">
@@ -112,6 +129,15 @@ function Registro() {
                   focus:outline-none focus:ring-2 focus:ring-red-500/70"
               />
             </div>
+
+            <div className="flex justify-center py-2 overflow-hidden">
+                <ReCAPTCHA
+                    ref={captchaRef}
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} //.env
+                    onChange={onCaptchaChange}
+                    theme="dark"
+                />
+            </div>
   
             <button
               type="submit"
@@ -132,7 +158,6 @@ function Registro() {
         </div>
       </div>
     );
-  }
-  
+}
 
 export default Registro;

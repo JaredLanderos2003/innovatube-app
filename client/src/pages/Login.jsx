@@ -79,7 +79,14 @@ function Login() {
                 <span className="text-red-400 text-xs">Ingresa tu contraseña</span>
               )}
             </div>
-  
+            <div className="flex justify-center mb-6 mt-2">
+                <Link 
+                  to="/recuperar" 
+                  className="text-sm text-gray-400 hover:text-red-400 hover:underline transition-colors"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+            </div>
             <button
               type="submit"
               className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3

@@ -7,6 +7,8 @@ import conexion from './config/database.js';
 import User from './models/User.js';
 import rutasAuth from './routes/rutasAuth.js';
 import rutasVideos from './routes/rutasVideos.js';
+import Favorito from './models/Favorite.js';
+import rutasFavoritos from './routes/favoritos.js';
 
 dotenv.config();
 const app = express();
@@ -24,6 +26,7 @@ app.use(morgan('dev'));
 //API
 app.use('/api/auth', rutasAuth);
 app.use('/api/videos', rutasVideos);
+app.use('/api/favoritos', rutasFavoritos);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Servidor activo' });

@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import conexion from '../config/database.js'; 
+import conexion from '../config/database.js';
 import bcrypt from 'bcrypt';
 
 const Usuario = conexion.define('Usuario', {
@@ -33,17 +33,25 @@ const Usuario = conexion.define('Usuario', {
     type: DataTypes.STRING,
     allowNull: false
   }
+}, {
+  hooks: {
+    beforeCreate: async (usuario) => {
+      if (usuario.contrasena) {
+        const salt = await bcrypt.genSalt(10);
+        usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
+      }
+    },
+    beforeUpdate: async (usuario) => {
+      if (usuario.changed('contrasena')) {
+        const salt = await bcrypt.genSalt(10);
+        usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
+      }
+    }
+  }
 });
 
-// Encriptacion
-Usuario.beforeCreate(async (usuario) => {
-  const salt = await bcrypt.genSalt(10);
-  usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
-});
-
-// Verificador
-Usuario.prototype.validarContrasena = async function (passwordIngresado) {
-  return await bcrypt.compare(passwordIngresado, this.contrasena);
+Usuario.prototype.validarContrasena = async function (passwordFormulario) {
+  return await bcrypt.compare(passwordFormulario, this.contrasena);
 };
 
 export default Usuario;

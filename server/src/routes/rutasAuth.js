@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { registrarUsuario, iniciarSesion } from '../controllers/auth.js';
+import { registrarUsuario, iniciarSesion, solicitarRecuperacion, restablecerContrasena } from '../controllers/auth.js';
 
 const router = Router();
 
-//http://localhost:3001/api/auth/registro
+
 router.post('/registro', registrarUsuario);
-//http://localhost:3001/api/auth/login
 router.post('/login', iniciarSesion);
+router.post('/recuperar', solicitarRecuperacion);
+router.post('/restablecer/:token', restablecerContrasena);
 
 export default router;
