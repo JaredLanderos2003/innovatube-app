@@ -12,18 +12,30 @@ import rutasFavoritos from './routes/favoritos.js';
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
+const listaBlanca = [
+    'http://localhost:5173',                       
+    'https://innovatube-frontend-rz18.onrender.com'  
+];
+
 app.use(cors({
-    origin: 'http://localhost:5173', 
+    origin: function (origin, callback) {
+        if (!origin || listaBlanca.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log("Bloqueado por CORS:", origin);
+            callback(new Error('No permitido por CORS'));
+        }
+    },
     credentials: true 
-  }));
+}));
 
 app.use(helmet());
 app.use(morgan('dev'));
-//API
+
+// API
 app.use('/api/auth', rutasAuth);
 app.use('/api/videos', rutasVideos);
 app.use('/api/favoritos', rutasFavoritos);
@@ -32,13 +44,13 @@ app.get('/', (req, res) => {
   res.json({ message: 'Servidor activo' });
 });
 
-
 async function iniciarServidor() {
   try {
     await conexion.sync({ force: false });
     console.log('BD lista y sincronizada');
 
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 3000; 
+    
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`Servidor corriendo en el puerto ${PORT}`);
     });
