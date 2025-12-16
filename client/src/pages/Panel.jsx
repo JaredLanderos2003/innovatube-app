@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import clienteAxios from '../api/axios'; 
 import toast, { Toaster } from 'react-hot-toast'; 
 import { LogOut, Search, PlayCircle, Star, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function Panel() {
   const navigate = useNavigate();
@@ -68,9 +69,14 @@ function Panel() {
           
           <div className="flex items-center gap-4 md:gap-6">
             
-            <a href="/favoritos" className="hidden md:flex text-gray-400 hover:text-red-400 transition-colors font-semibold items-center gap-2">
-               <Star size={20} /> <span className="text-sm">Mis Favoritos</span>
-            </a>
+          
+            <Link 
+            to="/favoritos" 
+            className="flex items-center gap-2 text-gray-400 hover:text-red-400 transition-colors font-semibold"
+            >
+            <Star size={20} /> 
+            <span className="hidden sm:block text-sm">Mis Favoritos</span>
+            </Link>
 
             <div className="flex items-center gap-3 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full shadow-sm">
                 <div className="bg-red-600 p-1 rounded-full">
