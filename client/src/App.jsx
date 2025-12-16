@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Registro from './pages/Registro';
 import Login from './pages/Login'; 
+import Panel from './pages/Panel';
 
 
 function Inicio() {
@@ -39,39 +40,6 @@ function Inicio() {
 
     </div>
   );
-}
-
-
-function Panel() {
-  const salir = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('usuario')
-    window.location.href = '/'
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-slate-900 to-black text-white flex flex-col items-center justify-center p-4">
-      <div className="text-center">
-
-        <h1 className="text-4xl font-bold text-transparent bg-clip-text
-          bg-gradient-to-r from-green-400 to-green-300 mb-3">
-          Sesión iniciada
-        </h1>
-
-        <p className="text-lg text-gray-300">
-          Bienvenido a InnovaTube
-        </p>
-
-        <button
-          onClick={salir}
-          className="mt-6 bg-red-600 hover:bg-red-500 px-6 py-2 rounded-lg transition-colors shadow-md shadow-red-600/30"
-        >
-          Cerrar sesión
-        </button>
-
-      </div>
-    </div>
-  )
 }
 
 function App() {
