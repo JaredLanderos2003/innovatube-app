@@ -107,6 +107,8 @@ export const solicitarRecuperacion = async (req, res) => {
   try {
     const { correo } = req.body;
     
+    console.log("Intentando enviar correo a:", correo); // Log para depurar
+
     const usuario = await Usuario.findOne({ where: { correo } });
     
     if (!usuario) {
@@ -120,13 +122,20 @@ export const solicitarRecuperacion = async (req, res) => {
     const frontendURL = process.env.FRONTEND_URL || 'http://localhost:5173';
     const enlace = `${frontendURL}/restablecer/${token}`;
 
+    // --- CORRECCIÓN FINAL PARA GMAIL Y RENDER ---
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: "smtp.gmail.com",
+      port: 587,             // Puerto estándar TLS (no se bloquea)
+      secure: false,         // 'false' es obligatorio para el puerto 587
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS 
+      },
+      tls: {
+        rejectUnauthorized: false // Evita errores de certificados en la nube
       }
     });
+    // --------------------------------------------
     
     const mailOptions = {
       from: '"Soporte InnovaTube" <no-reply@innovatube.com>',
@@ -151,6 +160,7 @@ export const solicitarRecuperacion = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
+    console.log("Correo enviado exitosamente");
 
     res.json({ mensaje: 'Correo enviado. Revisa tu bandeja de entrada.' });
 
