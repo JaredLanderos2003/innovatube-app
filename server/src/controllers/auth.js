@@ -4,7 +4,6 @@ import { Op } from 'sequelize';
 import axios from 'axios';
 import nodemailer from 'nodemailer'; 
 
-
 export const registrarUsuario = async (req, res) => {
   try {
     const { nombre, apellido, nombreUsuario, correo, contrasena, confirmarContrasena, recaptchaToken } = req.body;
@@ -55,7 +54,7 @@ export const registrarUsuario = async (req, res) => {
   }
 };
 
-// --- 2. INICIAR SESIÓN ---
+
 export const iniciarSesion = async (req, res) => {
   try {
     const { identificador, contrasena } = req.body; 
@@ -81,6 +80,14 @@ export const iniciarSesion = async (req, res) => {
       { expiresIn: '1d' } 
     );
 
+    
+    res.cookie("token", token, {
+      httpOnly: true, 
+      secure: true,  
+      sameSite: "none", 
+      maxAge: 24 * 60 * 60 * 1000 // 1 día
+    });
+
     res.json({
       mensaje: 'Hola de nuevo',
       token,
@@ -91,7 +98,7 @@ export const iniciarSesion = async (req, res) => {
     });
 
   } catch (error) {
-    console.log('Error en el login:', error);
+    console.log('Error en el login:');
     res.status(500).json({ mensaje: 'Error del server.' });
   }
 };
@@ -110,16 +117,16 @@ export const solicitarRecuperacion = async (req, res) => {
       expiresIn: '10m' 
     });
 
-    const enlace = `http://localhost:5173/restablecer/${token}`;
+    const frontendURL = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const enlace = `${frontendURL}/restablecer/${token}`;
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER,//.env
+        user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS 
       }
     });
-
     
     const mailOptions = {
       from: '"Soporte InnovaTube" <no-reply@innovatube.com>',
@@ -152,7 +159,6 @@ export const solicitarRecuperacion = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al enviar el correo.' });
   }
 };
-
 
 export const restablecerContrasena = async (req, res) => {
   try {

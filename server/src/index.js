@@ -9,9 +9,13 @@ import rutasAuth from './routes/rutasAuth.js';
 import rutasVideos from './routes/rutasVideos.js';
 import Favorito from './models/Favorite.js';
 import rutasFavoritos from './routes/favoritos.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 const app = express();
+app.use(cookieParser()); 
+app.use(express.json());
+app.set('trust proxy', 1);
 
 app.use(express.json());
 
